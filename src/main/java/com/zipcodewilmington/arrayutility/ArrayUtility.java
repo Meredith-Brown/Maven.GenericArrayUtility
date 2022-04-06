@@ -1,5 +1,6 @@
 package com.zipcodewilmington.arrayutility;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -9,9 +10,14 @@ import java.util.HashSet;
  */
 public class ArrayUtility<T> {
     T[] array;
+    T[] a;
 
     public ArrayUtility(T[] inputArray){
         array = inputArray;
+    }
+
+    public ArrayUtility(Class<T[]> clazz, int length){
+        a = clazz.cast(Array.newInstance(clazz.getComponentType(), length));
     }
 
     public Integer countDuplicatesInMerge(T[] arrayToMerge, T valueToEvaluate) {
@@ -82,16 +88,19 @@ public class ArrayUtility<T> {
     }
 
     public T[] removeValue(T valueToRemove) {
+        Class clazzRemove = array.getClass();
         ArrayList<T> arrayList = new ArrayList<>();
         for (T t : array) {
             if (t != valueToRemove) {
                 arrayList.add(t);
             }
         }
-        T[] output = arrayList.toArray(new T[0]);
+        ArrayUtility intermediate = new ArrayUtility(clazzRemove, arrayList.size());
+
         for (int i = 0; i < arrayList.size(); i++) {
-            output[i] = arrayList.get(i);
+            intermediate.a[i] = arrayList.get(i);
         }
+        T[] output = (T[]) Arrays.copyOf(intermediate.a, intermediate.a.length);
         return output;
     }
 }
